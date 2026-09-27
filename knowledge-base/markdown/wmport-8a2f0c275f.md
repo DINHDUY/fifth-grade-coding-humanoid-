@@ -1,0 +1,64 @@
+---
+doc_id: wmport-8a2f0c275f
+title: "include \"WMPort.h\""
+source_path: raw/github/Hiwonder-Tonybot/Arduino/AI视觉项目课程/视觉巡线/line_follow/src/WMMatrixLed/WMPort.cpp
+source_type: official
+status: processed
+---
+
+#include "WMPort.h"
+
+WMPort::WMPort(void)
+{
+}
+
+
+void WMPort::setOutput(uint8_t port)
+{
+	pinMode(port, OUTPUT);
+}
+
+void WMPort::setInput(uint8_t port)
+{
+	pinMode(port, INPUT);
+}
+
+void WMPort::setPuOn(uint8_t port)
+{
+	pinMode(port, INPUT_PULLUP);
+}
+
+bool WMPort::readDPort(uint8_t port)
+{
+	bool val;
+  	setInput(port);
+  	val = digitalRead(port);
+  	return(val);
+}
+
+bool WMPort::readDPuPort(uint8_t port)
+{
+	bool val;
+  	setPuOn(port);
+  	val = digitalRead(port);
+  	return(val);
+}
+
+int16_t WMPort::readAport(uint8_t port)
+{
+	int16_t val;
+  	setInput(port);
+  	val = analogRead(port);
+  	return(val);
+}
+
+void WMPort::writeDport(uint8_t port,bool value)
+{
+	setOutput(port);
+	digitalWrite(port, value);
+}
+
+void WMPort::writeAport(uint8_t port,int16_t value)
+{
+	analogWrite(port, value);
+}

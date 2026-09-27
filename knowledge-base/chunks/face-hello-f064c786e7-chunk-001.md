@@ -1,0 +1,60 @@
+---
+chunk_id: face-hello-f064c786e7-chunk-001
+doc_id: face-hello-f064c786e7
+title: "/**************************************************************"
+semantic_key: "/**************************************************************"
+keywords: ["raw", "github", "hiwonder-tonybot", "arduino", "face_hello", "ino"]
+---
+
+/**************************************************************
+ * company：深圳市幻尔科技有限公司
+ * date&&author：20241128&&CuZn
+ * description：
+**************************************************************/
+#include "base_config.h"
+#include "HardwareSerial.h" //串口库
+#include "LobotServoController.h" //舵机控制器库
+#include "Arduino.h"
+#include "Servo.h"
+#include "HWSensor.h" //传感器库
+#include "Hiwonder.hpp"
+#include "hw_esp32cam_ctl.h" //导入ESP32Cam通讯库
+
+LobotServoController Controller(Serial2); //实例化二次开发通信库
+HWSensor hwsensor;  //实例化传感器类
+Servo sonarServo; //超声波云台舵机控制类实例
+
+//ESP32Cam通讯对象
+HW_ESP32Cam hw_cam;
+
+void setup() {
+  // 初始化串口通信
+  Serial.begin(115200);
+  // 初始化与底板通信的串口
+  Serial2.begin(9600 , SERIAL_8N1 , IO_BaseRX , IO_BaseTX);
+  sonarServo.attach(IO_Servo);         //设定舵机控制io口
+  sonarServo.write(90); 
+  delay(200); //等待底板初始化完毕
+  sonarServo.detach();
+  // 初始化机器人姿态
+  Controller.runActionGroup(0 , 1);
+  delay(1500);
+  hwsensor.ultrasoundColor(0,0,0,0,0,0);
+  delay(2000);
+  Serial.println("start.");
+}
+
+void loop() {
+  Controller.receiveHandle();  //接收处理函数，从串口接收缓存中取出数据
+  bool res = false;
+  // 获取人脸检测结果
+  res = hw_cam.faceDetect();
+  // 若识别到
+  if(res == true)
+  {
+    Controller.runActionGroup(9, 1);
+    delay(3000);
+    hw_cam.faceDetect(); //用于清除缓存数据
+  }
+  delay(100);  //注意需要给相应的延时
+}

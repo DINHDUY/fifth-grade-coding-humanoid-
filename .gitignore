@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Frontend build output
+packages/frontend/dist/
+packages/frontend/node_modules/.tmp/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+.codex/
+
+# IDE and OS files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Logs and temporary files
+*.log
+coverage/
+__pycache__/
+*.py[cod]

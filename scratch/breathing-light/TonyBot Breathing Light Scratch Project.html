@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>TonyBot Breathing Light Scratch Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg: #0A0C1E;
+    --bg2: #10142B;
+    --panel: rgba(255,255,255,0.035);
+    --panel-border: rgba(255,255,255,0.09);
+    --text: #F1F3FF;
+    --text-muted: #9BA2C7;
+    --text-dim: #6B72A0;
+    --accent: #8C6BFF;
+    --accent-soft: rgba(140,107,255,0.16);
+    --warn: #FF8A5B;
+    --warn-soft: rgba(255,138,91,0.12);
+    --mint: #6EE7B7;
+    --code-bg: #0B0E1F;
+    --code-text: #9BE8B5;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F6F7FB; --bg2: #FFFFFF; --panel: #FFFFFF; --panel-border: #E4E6F0;
+      --text: #16192E; --text-muted: #565D82; --text-dim: #8890B5;
+      --accent-soft: rgba(140,107,255,0.14); --warn-soft: rgba(255,138,91,0.14);
+      --code-bg: #12162B; --code-text: #9BE8B5;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F7FB; --bg2: #FFFFFF; --panel: #FFFFFF; --panel-border: #E4E6F0;
+    --text: #16192E; --text-muted: #565D82; --text-dim: #8890B5;
+    --accent-soft: rgba(140,107,255,0.14); --warn-soft: rgba(255,138,91,0.14);
+    --code-bg: #12162B; --code-text: #9BE8B5;
+  }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 12% 0%, var(--bg2) 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.4px; color: var(--accent); }
+  h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(24px, 4vw, 33px); margin: 6px 0 8px; }
+  .sub { color: var(--text-muted); font-size: 14.5px; max-width: 660px; margin: 0 0 22px; }
+
+  section { margin-bottom: 32px; }
+  h2 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; gap: 9px; margin: 0 0 14px;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .dot.warn { background: var(--warn); }
+
+  .goal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .goal-list { counter-reset: goal; }
+  .goal-list li {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 14px;
+    counter-increment: goal;
+  }
+  .goal-list li::before {
+    content: counter(goal); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 8px; }
+  .steps li {
+    counter-increment: step; display: flex; gap: 12px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 14px; font-size: 14px;
+  }
+  .steps li::before {
+    content: counter(step); flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11.5px;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+
+  .info-note {
+    display: flex; gap: 9px; align-items: flex-start;
+    background: var(--accent-soft); border: 1px solid rgba(140,107,255,0.4);
+    border-radius: 10px; padding: 11px 14px; font-size: 13px; margin-top: 12px;
+  }
+  .info-note b { color: var(--accent); }
+
+  .block-card {
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .block-title { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+  .block-note { font-size: 13px; color: var(--text-muted); margin: 0 0 10px; line-height: 1.55; }
+
+  .tune-list, .valid-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .tune-list { counter-reset: tune; }
+  .tune-list li, .valid-list li {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 9px 14px;
+  }
+  .tune-list li::before {
+    counter-increment: tune; content: counter(tune); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--mint); background: rgba(110,231,183,0.14); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+  .valid-list { counter-reset: valid; }
+  .valid-list li::before {
+    counter-increment: valid; content: counter(valid); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .safety {
+    background: var(--warn-soft); border: 1px solid rgba(255,138,91,0.4);
+    border-radius: 12px; padding: 16px 18px; font-size: 13.8px; color: var(--text);
+  }
+  .safety strong { color: var(--warn); }
+  .safety ul { margin: 8px 0 0; padding-left: 18px; }
+  .safety li { margin-bottom: 4px; }
+
+  .sources {
+    font-family: 'Space Mono', monospace; font-size: 11.5px; color: var(--text-dim);
+    border-top: 1px solid var(--panel-border); padding-top: 14px; margin-top: 30px; line-height: 1.9;
+    word-break: break-all;
+  }
+  footer { margin-top: 20px; font-size: 11.5px; color: var(--text-dim); text-align: center; }
+
+  /* ---- Scratch-style visual blocks ---- */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 16px; font-size: 12.5px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  .sb-stage {
+    background: var(--code-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 18px 18px 22px; overflow-x: auto;
+  }
+  .sb-stack { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .sb-block {
+    --c: #FFAB19;
+    position: relative;
+    background: var(--c);
+    color: #fff;
+    border-radius: 5px;
+    padding: 6px 12px 6px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 3px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  .sb-block::before {
+    content: ''; position: absolute; top: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--c); border-radius: 3px 3px 0 0;
+  }
+  .sb-block::after {
+    content: ''; position: absolute; bottom: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--code-bg); border-radius: 0 0 3px 3px;
+  }
+  .sb-hat { border-radius: 12px 12px 5px 5px; padding-top: 8px; padding-bottom: 8px; }
+  .sb-hat::before { content: none; }
+
+  .sb-ico { font-size: 12px; }
+  .sb-in {
+    background: #fff; color: #3A3F55; border-radius: 9px; padding: 1px 8px;
+    font-family: 'Space Mono', monospace; font-size: 11.5px; font-weight: 700;
+  }
+  .sb-rep {
+    background: #59C059; color: #fff; border-radius: 11px; padding: 1px 9px;
+    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+  }
+
+  .sb-c { --c: #FFAB19; background: var(--c); border-radius: 5px; position: relative; margin-top: 3px; }
+  .sb-c::before {
+    content: ''; position: absolute; top: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--c); border-radius: 3px 3px 0 0;
+  }
+  .sb-c::after {
+    content: ''; position: absolute; bottom: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--code-bg); border-radius: 0 0 3px 3px;
+  }
+  .sb-c-head {
+    padding: 6px 12px 6px 24px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700;
+    color: #fff; display: flex; align-items: center; gap: 5px;
+  }
+  .sb-c-body {
+    background: rgba(0,0,0,0.22); margin: 0 4px 0 22px; border-radius: 4px;
+    padding: 8px 8px 6px; display: flex; flex-direction: column; align-items: flex-start;
+  }
+  .sb-c-foot { height: 12px; }
+
+  .sb-caption { font-size: 12px; color: var(--text-dim); margin: 10px 0 0; font-family: 'Space Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">HIWONDER TONYBOT · WONDERCODE / SCRATCH</div>
+  <h1>Breathing Light Scratch Project</h1>
+  <p class="sub">A WonderCode/Scratch program that makes TonyBot's ultrasonic RGB LEDs smoothly brighten and dim like a breathing light, using the <strong>Tonybot Main Program</strong>, <strong>Repeat</strong>, and <strong>Glowy Ultrasonic Sensor</strong> blocks.</p>
+
+  <div class="legend">
+    <span><i style="background:#FFBF00"></i>Events</span>
+    <span><i style="background:#FFAB19"></i>Control</span>
+    <span><i style="background:#FF8C1A"></i>Variables</span>
+    <span><i style="background:#59C059"></i>Operators</span>
+    <span><i style="background:#FF6680"></i>My Blocks</span>
+    <span><i style="background:#24B8A0"></i>Tonybot extension</span>
+    <span><i style="background:#8C52FF"></i>Glowy Ultrasonic Sensor</span>
+  </div>
+  <p class="block-note" style="margin-top:-8px;">Colors follow the standard Scratch block language. Control and Variables use two different shades of orange — check the icon, not just the hue. The Tonybot and Glowy Ultrasonic Sensor extension colors are approximate; confirm against your installed WonderCode palette.</p>
+
+  <section>
+    <h2><span class="dot"></span>Goal</h2>
+    <ol class="goal-list">
+      <li>Initialize TonyBot safely.</li>
+      <li>Control the ultrasonic RGB LEDs.</li>
+      <li>Gradually increase and decrease LED brightness.</li>
+      <li>Optionally cycle through multiple colors.</li>
+      <li>Turn the LEDs off when the program finishes.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Setup in WonderCode</h2>
+    <ol class="steps">
+      <li>Open WonderCode.</li>
+      <li>Add the extension: <strong>Robot → Tonybot</strong>.</li>
+      <li>Add the <strong>Glowy Ultrasonic Sensor</strong> extension.</li>
+      <li>Connect TonyBot over USB.</li>
+      <li>Select the correct <strong>CH340</strong> COM port.</li>
+      <li>Use <strong>Upload Mode</strong> when transferring the program.</li>
+    </ol>
+    <div class="info-note">
+      <span>ℹ</span>
+      <span>The ultrasonic sensor is pre-installed on TonyBot and communicates over I2C. The same extension controls its RGB lights.</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Reusable Scratch blocks</h2>
+
+    <div class="block-card">
+      <div class="block-title">Tonybot Initialize</div>
+      <p class="block-note">Establishes a known robot posture before the light program starts.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Tonybot Initialize</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">0</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">1</span> seconds</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Set All LEDs (red) (green) (blue)</div>
+      <p class="block-note">Uses the Glowy Ultrasonic Sensor color block to set both RGB lights. If the extension provides one block for all LEDs, use that block instead.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Set All LEDs <span class="sb-in">red</span> <span class="sb-in">green</span> <span class="sb-in">blue</span></div>
+          <div class="sb-block" style="--c:#8C52FF;"><span class="sb-ico">💡</span> set left RGB to <span class="sb-in">red</span> <span class="sb-in">green</span> <span class="sb-in">blue</span></div>
+          <div class="sb-block" style="--c:#8C52FF;"><span class="sb-ico">💡</span> set right RGB to <span class="sb-in">red</span> <span class="sb-in">green</span> <span class="sb-in">blue</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Breathing Color (red) (green) (blue)</div>
+      <p class="block-note">Creates a Scratch variable named <code>brightness</code> and uses it to scale the color. Start with 10 brightness steps; increase to 20 for a slower, smoother fade.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Breathing Color <span class="sb-in">red</span> <span class="sb-in">green</span> <span class="sb-in">blue</span></div>
+          <div class="sb-block" style="--c:#FF8C1A;"><span class="sb-ico">⚙</span> set brightness to <span class="sb-in">0</span></div>
+
+          <div class="sb-c" style="--c:#FFAB19;">
+            <div class="sb-c-head"><span class="sb-ico">↻</span> repeat <span class="sb-in">10</span></div>
+            <div class="sb-c-body">
+              <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Set All LEDs
+                <span class="sb-rep">red × brightness ÷ 10</span>
+                <span class="sb-rep">green × brightness ÷ 10</span>
+                <span class="sb-rep">blue × brightness ÷ 10</span>
+              </div>
+              <div class="sb-block" style="--c:#FF8C1A;"><span class="sb-ico">⚙</span> change brightness by <span class="sb-in">1</span></div>
+              <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.1</span> seconds</div>
+            </div>
+            <div class="sb-c-foot"></div>
+          </div>
+
+          <div class="sb-c" style="--c:#FFAB19;">
+            <div class="sb-c-head"><span class="sb-ico">↻</span> repeat <span class="sb-in">10</span></div>
+            <div class="sb-c-body">
+              <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Set All LEDs
+                <span class="sb-rep">red × brightness ÷ 10</span>
+                <span class="sb-rep">green × brightness ÷ 10</span>
+                <span class="sb-rep">blue × brightness ÷ 10</span>
+              </div>
+              <div class="sb-block" style="--c:#FF8C1A;"><span class="sb-ico">⚙</span> change brightness by <span class="sb-in">-1</span></div>
+              <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.1</span> seconds</div>
+            </div>
+            <div class="sb-c-foot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Lights Off</div>
+      <p class="block-note">Call this block at the end of the program, or before disconnecting TonyBot.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Lights Off</div>
+          <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Set All LEDs <span class="sb-in">0</span> <span class="sb-in">0</span> <span class="sb-in">0</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Main program — blue breathing light</h2>
+    <div class="sb-stage">
+      <div class="sb-stack">
+        <div class="sb-block sb-hat" style="--c:#FFBF00;"><span class="sb-ico">🏁</span> when green flag clicked</div>
+        <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Tonybot Initialize</div>
+        <div class="sb-block" style="--c:#FF8C1A;"><span class="sb-ico">⚙</span> set brightness to <span class="sb-in">0</span></div>
+        <div class="sb-c" style="--c:#FFAB19;">
+          <div class="sb-c-head"><span class="sb-ico">↻</span> repeat <span class="sb-in">20</span></div>
+          <div class="sb-c-body">
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Breathing Color <span class="sb-in">0</span> <span class="sb-in">0</span> <span class="sb-in">255</span></div>
+          </div>
+          <div class="sb-c-foot"></div>
+        </div>
+        <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Lights Off</div>
+      </div>
+    </div>
+    <p class="block-note" style="margin-top:10px;">The official example uses blue light and breathes approximately every two seconds. Use a dimly lit environment to see the effect clearly.</p>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Optional multicolor version</h2>
+    <div class="sb-stage">
+      <div class="sb-stack">
+        <div class="sb-block sb-hat" style="--c:#FFBF00;"><span class="sb-ico">🏁</span> when green flag clicked</div>
+        <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Tonybot Initialize</div>
+        <div class="sb-block" style="--c:#FF8C1A;"><span class="sb-ico">⚙</span> set brightness to <span class="sb-in">0</span></div>
+        <div class="sb-c" style="--c:#FFAB19;">
+          <div class="sb-c-head"><span class="sb-ico">∞</span> forever</div>
+          <div class="sb-c-body">
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Breathing Color <span class="sb-in">0</span> <span class="sb-in">0</span> <span class="sb-in">255</span></div>
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Breathing Color <span class="sb-in">0</span> <span class="sb-in">255</span> <span class="sb-in">0</span></div>
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Breathing Color <span class="sb-in">255</span> <span class="sb-in">0</span> <span class="sb-in">0</span></div>
+          </div>
+          <div class="sb-c-foot"></div>
+        </div>
+      </div>
+    </div>
+    <p class="block-note" style="margin-top:10px;">Cycles through blue, green, and red. Use the same RGB values for the left and right LEDs for a synchronized effect — or different values per side for a two-color look. A <code>forever</code> loop never reaches a stop block on its own, so pair it with a separate "when stop clicked → Lights Off" script during testing.</p>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Tuning</h2>
+    <p class="block-note">Change one setting at a time:</p>
+    <ol class="tune-list">
+      <li>Increase the number of brightness steps for a smoother fade.</li>
+      <li>Increase the wait time for a slower breathing rhythm.</li>
+      <li>Change the RGB values to select another color.</li>
+      <li>Use different left and right RGB values for a two-color effect.</li>
+      <li>Increase the repeat count for a longer demonstration.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="dot warn"></span>Upload and validation</h2>
+    <ol class="valid-list">
+      <li>Save the Scratch project.</li>
+      <li>Click <strong>Upload</strong>.</li>
+      <li>Wait for the upload-success message.</li>
+      <li>Test one color before enabling the multicolor loop.</li>
+      <li>Confirm that the LEDs brighten and dim smoothly.</li>
+      <li>Run <strong>Lights Off</strong> before disconnecting or powering down TonyBot.</li>
+    </ol>
+    <div class="safety" style="margin-top:14px;">
+      <strong>Reference file:</strong> the official sample is named <code>02 Breathing Light Program.sb3</code> and can be opened directly in WonderCode as a reference implementation.
+    </div>
+  </section>
+
+  <div class="sources">
+    Source: knowledge-base/markdown/5-scratch-programming-projects-d83ef5c713.md
+  </div>
+
+  <footer>TonyBot Breathing Light Scratch Project · WonderCode reference</footer>
+</div>
+</body>
+</html>

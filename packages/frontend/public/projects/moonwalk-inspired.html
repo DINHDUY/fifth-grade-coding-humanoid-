@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>TonyBot Moonwalk-Inspired Scratch Routine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg: #0A0C1E;
+    --bg2: #10142B;
+    --panel: rgba(255,255,255,0.035);
+    --panel-border: rgba(255,255,255,0.09);
+    --text: #F1F3FF;
+    --text-muted: #9BA2C7;
+    --text-dim: #6B72A0;
+    --accent: #4FD1FF;
+    --accent-soft: rgba(79,209,255,0.14);
+    --warn: #FF8A5B;
+    --warn-soft: rgba(255,138,91,0.12);
+    --mint: #6EE7B7;
+    --code-bg: #0B0E1F;
+    --code-text: #9BE8B5;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F6F7FB; --bg2: #FFFFFF; --panel: #FFFFFF; --panel-border: #E4E6F0;
+      --text: #16192E; --text-muted: #565D82; --text-dim: #8890B5;
+      --accent-soft: rgba(79,209,255,0.12); --warn-soft: rgba(255,138,91,0.14);
+      --code-bg: #12162B; --code-text: #9BE8B5;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F7FB; --bg2: #FFFFFF; --panel: #FFFFFF; --panel-border: #E4E6F0;
+    --text: #16192E; --text-muted: #565D82; --text-dim: #8890B5;
+    --accent-soft: rgba(79,209,255,0.12); --warn-soft: rgba(255,138,91,0.14);
+    --code-bg: #12162B; --code-text: #9BE8B5;
+  }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 12% 0%, var(--bg2) 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.4px; color: var(--accent); }
+  h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(24px, 4vw, 33px); margin: 6px 0 8px; }
+  .sub { color: var(--text-muted); font-size: 14.5px; max-width: 660px; margin: 0 0 22px; }
+
+  section { margin-bottom: 32px; }
+  h2 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; gap: 9px; margin: 0 0 14px;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .dot.warn { background: var(--warn); }
+
+  .goal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .goal-list li {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 14px;
+    counter-increment: goal;
+  }
+  .goal-list { counter-reset: goal; }
+  .goal-list li::before {
+    content: counter(goal); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  table.groups { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.groups th, table.groups td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--panel-border); }
+  table.groups th { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.3px; }
+  table.groups td:first-child { font-family: 'Space Mono', monospace; color: var(--accent); font-weight: 700; white-space: nowrap; }
+  .overflow-x { overflow-x: auto; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 12px; padding: 4px 14px; }
+
+  .firmware-note {
+    display: flex; gap: 9px; align-items: flex-start;
+    background: var(--warn-soft); border: 1px solid rgba(255,138,91,0.35);
+    border-radius: 10px; padding: 11px 14px; font-size: 13px; margin-top: 12px;
+  }
+  .firmware-note b { color: var(--warn); }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 8px; }
+  .steps li {
+    counter-increment: step; display: flex; gap: 12px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 14px; font-size: 14px;
+  }
+  .steps li::before {
+    content: counter(step); flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11.5px;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .steps li.caution { border-color: rgba(255,138,91,0.4); }
+  .steps li.caution::before { background: var(--warn-soft); color: var(--warn); }
+
+  .block-card {
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .block-title { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+  .block-note { font-size: 13px; color: var(--text-muted); margin: 0 0 10px; line-height: 1.55; }
+  pre.code {
+    background: var(--code-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+    padding: 12px 14px; font-size: 12.8px; line-height: 1.65; color: var(--code-text);
+    font-family: 'Space Mono', monospace; overflow-x: auto; margin: 0;
+  }
+  pre.code .cmt { color: var(--text-dim); }
+
+  .tune-list, .valid-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .tune-list li, .valid-list li {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 9px 14px;
+  }
+  .tune-list { counter-reset: tune; }
+  .tune-list li::before {
+    counter-increment: tune; content: counter(tune); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--mint); background: rgba(110,231,183,0.14); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+  .valid-list { counter-reset: valid; }
+  .valid-list li::before {
+    counter-increment: valid; content: counter(valid); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px;
+    color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .safety {
+    background: var(--warn-soft); border: 1px solid rgba(255,138,91,0.4);
+    border-radius: 12px; padding: 16px 18px; font-size: 13.8px; color: var(--text);
+  }
+  .safety strong { color: var(--warn); }
+  .safety ul { margin: 8px 0 0; padding-left: 18px; }
+  .safety li { margin-bottom: 4px; }
+
+  /* ---- Scratch-style visual blocks ---- */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 16px; font-size: 12.5px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  .sb-stage {
+    background: var(--code-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 18px 18px 22px; overflow-x: auto;
+  }
+  .sb-stack { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .sb-block {
+    --c: #FFAB19;
+    position: relative;
+    background: var(--c);
+    color: #fff;
+    border-radius: 5px;
+    padding: 6px 12px 6px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    margin-top: 3px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  .sb-block::before {
+    content: ''; position: absolute; top: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--c); border-radius: 3px 3px 0 0;
+  }
+  .sb-block::after {
+    content: ''; position: absolute; bottom: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--code-bg); border-radius: 0 0 3px 3px;
+  }
+  .sb-hat { border-radius: 12px 12px 5px 5px; padding-top: 8px; padding-bottom: 8px; }
+  .sb-hat::before { content: none; }
+
+  .sb-ico { font-size: 12px; }
+  .sb-in {
+    background: #fff; color: #3A3F55; border-radius: 9px; padding: 1px 8px;
+    font-family: 'Space Mono', monospace; font-size: 11.5px; font-weight: 700;
+  }
+
+  .sb-c { --c: #FFAB19; background: var(--c); border-radius: 5px; position: relative; margin-top: 3px; }
+  .sb-c::before {
+    content: ''; position: absolute; top: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--c); border-radius: 3px 3px 0 0;
+  }
+  .sb-c::after {
+    content: ''; position: absolute; bottom: -4px; left: 16px; width: 14px; height: 4px;
+    background: var(--code-bg); border-radius: 0 0 3px 3px;
+  }
+  .sb-c-head {
+    padding: 6px 12px 6px 24px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700;
+    color: #fff; display: flex; align-items: center; gap: 5px;
+  }
+  .sb-c-body {
+    background: rgba(0,0,0,0.22); margin: 0 4px 0 22px; border-radius: 4px;
+    padding: 8px 8px 6px; display: flex; flex-direction: column; align-items: flex-start;
+  }
+  .sb-c-foot { height: 12px; }
+
+  .sb-legend-dot { --c: inherit; }
+
+  .sb-caption { font-size: 12px; color: var(--text-dim); margin: 10px 0 0; font-family: 'Space Mono', monospace; }
+
+  .sources {
+    font-family: 'Space Mono', monospace; font-size: 11.5px; color: var(--text-dim);
+    border-top: 1px solid var(--panel-border); padding-top: 14px; margin-top: 30px; line-height: 1.9;
+    word-break: break-all;
+  }
+  footer { margin-top: 20px; font-size: 11.5px; color: var(--text-dim); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">HIWONDER TONYBOT · WONDERCODE / SCRATCH</div>
+  <h1>Moonwalk-Inspired Scratch Routine</h1>
+  <p class="sub">A short, safe, moonwalk-inspired dance built entirely from TonyBot's prebuilt action groups. No copyrighted music or choreography is reproduced — this is an original movement pattern assembled from the robot's own dance library.</p>
+
+  <section>
+    <h2><span class="dot"></span>Goal</h2>
+    <ol class="goal-list">
+      <li>Initialize TonyBot in a stable standing pose.</li>
+      <li>Play a short introduction.</li>
+      <li>Perform a repeated backward-gliding dance pattern.</li>
+      <li>Add a dance accent or turn.</li>
+      <li>Stop and return to a stable standing pose.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Action groups used</h2>
+    <p class="block-note">TonyBot runs these through <code>runActionGroup(id, count)</code>.</p>
+    <div class="overflow-x">
+      <table class="groups">
+        <tr><th>ID</th><th>Meaning</th></tr>
+        <tr><td>0</td><td>Stand / stop</td></tr>
+        <tr><td>1</td><td>Walk forward</td></tr>
+        <tr><td>2</td><td>Walk backward</td></tr>
+        <tr><td>3</td><td>Turn left</td></tr>
+        <tr><td>4</td><td>Turn right</td></tr>
+        <tr><td>9</td><td>Wave</td></tr>
+        <tr><td>150–158</td><td>Dance actions</td></tr>
+      </table>
+    </div>
+    <div class="firmware-note">
+      <span>⚠</span>
+      <span><b>Firmware-dependent:</b> these mappings can vary by installed firmware. Test every group on the actual unit before locking it into the final routine.</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Setup in WonderCode</h2>
+    <ol class="steps">
+      <li>Open WonderCode on a Windows computer.</li>
+      <li>Add the extension: <strong>Robot → Tonybot</strong>.</li>
+      <li>Connect TonyBot over USB.</li>
+      <li>Select the correct <strong>CH340</strong> COM port.</li>
+      <li class="caution">Do not use <strong>COM1</strong> unless it is confirmed to be the robot controller.</li>
+      <li>Use <strong>Upload Mode</strong> when transferring the program.</li>
+    </ol>
+    <p class="block-note" style="margin-top:10px;">The Tonybot extension, CH340 port, and upload workflow are covered in section 5.1.2 of the imported Scratch documentation.</p>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Reusable My Blocks</h2>
+    <div class="legend">
+      <span><i style="background:#FFBF00"></i>Events</span>
+      <span><i style="background:#FFAB19"></i>Control</span>
+      <span><i style="background:#FF6680"></i>My Blocks</span>
+      <span><i style="background:#24B8A0"></i>Tonybot extension</span>
+    </div>
+    <p class="block-note" style="margin-top:-6px;">Block shapes and category colors follow the standard Scratch block language (Control = orange, My Blocks = pink, extension blocks = their own color). The Tonybot extension's exact shade can vary by WonderCode version — confirm against your installed palette.</p>
+
+    <div class="block-card">
+      <div class="block-title">Tonybot Initialize</div>
+      <p class="block-note">Establishes a known standing pose before every performance.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Tonybot Initialize</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">0</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">1</span> seconds</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Run Action Group (id) (repeat count)</div>
+      <p class="block-note">Wraps the extension block for reuse. Use a repeat count of 1 during testing — avoid indefinite repeats.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Run Action Group <span class="sb-in">id</span> <span class="sb-in">repeat count</span></div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">id</span> <span class="sb-in">repeat count</span></div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⌛</span> wait until action group finishes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Moonwalk Step</div>
+      <p class="block-note">Conservative starting pattern. Tune the delays experimentally — if the backward action doesn't look right, test the dance groups instead of combining group 2 with group 0.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Moonwalk Step</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">2</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.3</span> seconds</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">0</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.2</span> seconds</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Moonwalk Accent</div>
+      <p class="block-note">Test groups 150–158 individually and pick the best fit — don't assume any one group is "the moonwalk."</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Moonwalk Accent</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">150</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.2</span> seconds</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-card">
+      <div class="block-title">Safe Stop</div>
+      <p class="block-note">Keep this available as an emergency stop, and call it at the end of every routine.</p>
+      <div class="sb-stage">
+        <div class="sb-stack">
+          <div class="sb-block sb-hat" style="--c:#FF6680;"><span class="sb-ico">🧩</span> define Safe Stop</div>
+          <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">0</span> <span class="sb-in">1</span> time</div>
+          <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">1</span> seconds</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Proposed choreography</h2>
+    <div class="sb-stage">
+      <div class="sb-stack">
+        <div class="sb-block sb-hat" style="--c:#FFBF00;"><span class="sb-ico">🏁</span> when green flag clicked</div>
+        <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Tonybot Initialize</div>
+        <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">9</span> <span class="sb-in">1</span> time</div>
+        <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">1</span> seconds</div>
+
+        <div class="sb-c" style="--c:#FFAB19;">
+          <div class="sb-c-head"><span class="sb-ico">↻</span> repeat <span class="sb-in">4</span></div>
+          <div class="sb-c-body">
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Moonwalk Step</div>
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Moonwalk Accent</div>
+            <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.5</span> seconds</div>
+          </div>
+          <div class="sb-c-foot"></div>
+        </div>
+
+        <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">3</span> <span class="sb-in">1</span> time</div>
+        <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.3</span> seconds</div>
+
+        <div class="sb-c" style="--c:#FFAB19;">
+          <div class="sb-c-head"><span class="sb-ico">↻</span> repeat <span class="sb-in">2</span></div>
+          <div class="sb-c-body">
+            <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Moonwalk Step</div>
+            <div class="sb-block" style="--c:#24B8A0;"><span class="sb-ico">▶</span> run action group <span class="sb-in">150</span> <span class="sb-in">1</span> time</div>
+            <div class="sb-block" style="--c:#FFAB19;"><span class="sb-ico">⏱</span> wait <span class="sb-in">0.5</span> seconds</div>
+          </div>
+          <div class="sb-c-foot"></div>
+        </div>
+
+        <div class="sb-block" style="--c:#FF6680;"><span class="sb-ico">🧩</span> Safe Stop</div>
+      </div>
+    </div>
+    <p class="sb-caption">🧩 My Blocks (pink) call the definitions above · ▶ teal = Tonybot extension block · orange = Control</p>
+    <p class="block-note" style="margin-top:10px;">If the backward step doesn't create a convincing glide, substitute one of the tested groups 151–158 as a complete prebuilt dance phrase instead.</p>
+  </section>
+
+  <section>
+    <h2><span class="dot"></span>Tuning sequence</h2>
+    <p class="block-note">Change only one variable at a time:</p>
+    <ol class="tune-list">
+      <li>Backward action-group repeat count</li>
+      <li>Delay after the backward step</li>
+      <li>Dance action-group selection</li>
+      <li>Number of repetitions</li>
+      <li>Turn timing</li>
+      <li>Starting and ending posture</li>
+    </ol>
+    <p class="block-note" style="margin-top:10px;">Use a flat, non-slippery surface and leave clear space around the robot.</p>
+  </section>
+
+  <section>
+    <h2><span class="dot warn"></span>Validation and safety</h2>
+    <p class="block-note">Test in this order:</p>
+    <ol class="valid-list">
+      <li>Run Tonybot Initialize only.</li>
+      <li>Test action groups 150–158 one at a time.</li>
+      <li>Test one Moonwalk Step.</li>
+      <li>Run two steps.</li>
+      <li>Run the complete routine at low repetition counts.</li>
+      <li>Confirm that Safe Stop always returns TonyBot to a stable pose.</li>
+    </ol>
+    <div class="safety" style="margin-top:14px;">
+      <strong>Before scaling up:</strong>
+      <ul>
+        <li>Do not use continuous loops until the robot consistently returns to a stable standing pose.</li>
+        <li>Avoid movement experiments near obstacles or while TonyBot is on an unstable or slippery surface.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="sources">
+    Sources: knowledge-base/raw/github/Hiwonder-Tonybot/README.md · knowledge-base/raw/github/Hiwonder-Tonybot/Arduino/AI大模型应用课程/01 大模型应用程序/Tonybot_AI/WonderLLM.cpp · knowledge-base/markdown/5-scratch-programming-projects-d83ef5c713.md
+  </div>
+
+  <footer>TonyBot Moonwalk-Inspired Scratch Routine · WonderCode reference</footer>
+</div>
+</body>
+</html>

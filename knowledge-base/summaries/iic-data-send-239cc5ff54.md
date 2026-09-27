@@ -1,0 +1,28 @@
+---
+doc_id: iic-data-send-239cc5ff54
+title: "pragma once"
+source_path: raw/github/Hiwonder-Tonybot/Arduino/AI视觉项目课程/人脸识别/ESP32Cam_FaceDetection/iic_data_send.hpp
+source_type: official
+status: processed
+---
+
+# pragma once
+
+#pragma once
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
+
+typedef struct
+{
+  uint8_t center_x;
+  uint8_t center_y;
+  uint8_t detection_width;
+  uint8_t detection_length;
+}iic_send_data_t;
+
+
+void register_iic_data_send(const QueueHandle_t result_i,
+                            const QueueHandle_t result_o);

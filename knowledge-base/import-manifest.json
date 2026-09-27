@@ -1,0 +1,10 @@
+{
+  "source": "docs/references.md",
+  "generated_by": "tools/import_tonybot_kb.py",
+  "documents": 874,
+  "notes": [
+    "HTML, Markdown, and source-code files imported.",
+    "Binary files and the Git metadata directory were excluded from indexing.",
+    "Google Drive folders remain represented by resources-download.html links."
+  ]
+}

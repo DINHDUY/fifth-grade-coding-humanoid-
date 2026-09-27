@@ -1,0 +1,76 @@
+---
+doc_id: follow-48f34ce91b
+title: "/**************************************************************"
+source_path: raw/github/Hiwonder-Tonybot/Arduino/传感器开发课程/定距行走/Follow/Follow.ino
+source_type: official
+status: processed
+---
+
+# /**************************************************************
+
+/**************************************************************
+ * company：深圳市幻尔科技有限公司
+ * date&&author：20241128&&CuZn
+ * description：
+**************************************************************/
+#include "base_config.h"
+#include "HardwareSerial.h" //串口库
+#include "LobotServoController.h" //舵机控制器库
+#include "Arduino.h"
+#include "Servo.h"
+#include "HWSensor.h" //传感器库
+#include "Hiwonder.hpp"
+
+LobotServoController Controller(Serial2); //实例化二次开发通信库
+HWSensor hwsensor;  //实例化传感器类
+Servo sonarServo; //超声波云台舵机控制类实例
+
+uint16_t Distance = 0;
+uint16_t getDistance() {       //获得距离
+  uint16_t distance1, distance2, distance3;
+  distance1 = hwsensor.ultrasoundGetDistance();
+  distance2 = hwsensor.ultrasoundGetDistance();
+  distance3 = hwsensor.ultrasoundGetDistance();
+
+  Distance = (distance1 + distance2 + distance3)/3;
+  return Distance;
+}
+
+
+bool have_move = false;
+/*定距行走任务*/
+void Distancewalking()
+{
+  static uint8_t step = 0;
+  static uint32_t last_tick = 0;
+  if(millis() <= last_tick)
+  {
+    return;
+  }
+  switch(step) {
+    case 0:
+        // 若距离过近
+        if (Distance > 30 && Distance < 180) {//亮红灯，执行过渡动作         
+          hwsensor.ultrasoundColor(50, 0, 0, 50, 0, 0);  
+          Controller.runActionGroup(18, 1);
+          last_tick = millis()+350;
+          have_move = true;
+          step = 1;
+        }
+        // 若距离过远
+        else if (Distance > 300 && Distance < 400) {//亮绿灯，执行过渡动作
+          hwsensor.ultrasoundColor(0, 50, 0, 0, 50, 0);    
+          Controller.runActionGroup(18, 1);  
+          last_tick = millis()+400;
+          have_move = true;
+          step = 2;
+        }
+        else if (have_move) {
+          step = 3;
+        }
+        else {
+          hwsensor.ultrasoundColor(0, 0, 50, 0, 0, 50);            
+        }
+      break;
+    case 1:
+        if ((Distance >

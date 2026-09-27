@@ -1,0 +1,63 @@
+---
+doc_id: esp-lcd-st77912-8aa53dc9a1
+title: "include <stdlib.h>"
+source_path: raw/github/Hiwonder-Tonybot/Arduino/AI大模型离线课程/7.8.4 人脸识别/02 人脸识别程序/01 WonderLLM人脸识别程序/face_detection/esp_lcd_st77912.c
+source_type: official
+status: processed
+---
+
+# include <stdlib.h>
+
+#include <stdlib.h>
+#include <sys/cdefs.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+#include "esp_check.h"
+#include "esp_lcd_panel_interface.h"
+#include "esp_lcd_panel_io.h"
+#include "esp_lcd_panel_vendor.h"
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_panel_commands.h"
+#include "esp_log.h"
+
+#include "esp_lcd_st77912.h"
+
+#define LCD_OPCODE_WRITE_CMD        (0x02ULL)
+#define LCD_OPCODE_READ_CMD         (0x0BULL)
+#define LCD_OPCODE_WRITE_COLOR      (0x32ULL)
+
+#define ST77912_CMD_SET             (0xF0)
+#define ST77912_PARAM_SET           (0x00)
+
+static const char *TAG = "st77912";
+
+static esp_err_t panel_st77912_del(esp_lcd_panel_t *panel);
+static esp_err_t panel_st77912_reset(esp_lcd_panel_t *panel);
+static esp_err_t panel_st77912_init(esp_lcd_panel_t *panel);
+static esp_err_t panel_st77912_draw_bitmap(esp_lcd_panel_t *panel, int x_start, int y_start, int x_end, int y_end, const void *color_data);
+static esp_err_t panel_st77912_invert_color(esp_lcd_panel_t *panel, bool invert_color_data);
+static esp_err_t panel_st77912_mirror(esp_lcd_panel_t *panel, bool mirror_x, bool mirror_y);
+static esp_err_t panel_st77912_swap_xy(esp_lcd_panel_t *panel, bool swap_axes);
+static esp_err_t panel_st77912_set_gap(esp_lcd_panel_t *panel, int x_gap, int y_gap);
+static esp_err_t panel_st77912_disp_on_off(esp_lcd_panel_t *panel, bool off);
+
+typedef struct {
+    esp_lcd_panel_t base;
+    esp_lcd_panel_io_handle_t io;
+    int reset_gpio_num;
+    int x_gap;
+    int y_gap;
+    uint8_t fb_bits_per_pixel;
+    uint8_t madctl_val;
+    uint8_t colmod_val;
+    const st77912_lcd_init_cmd_t *init_cmds;
+    uint16_t init_cmds_size;
+    struct {
+        unsigned int use_qspi_interface: 1;
+        unsigned int reset_level: 1;
+    } flags;
+} st77912_panel_t;
+
+es
