@@ -1,0 +1,31 @@
+.anatomy-figure { margin: 0; }
+.anatomy-feedback { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px; padding: 10px; border-radius: 10px 10px 0 0; background: #e7efff; color: #087b93; font-size: 12px; }
+.anatomy-feedback small { color: #54657d; font-size: 10px; font-weight: 400; }
+.sequencer-page .anatomy-map { display: block; position: relative; width: 100%; height: clamp(400px, 45vw, 570px); min-height: 0; aspect-ratio: auto; border-radius: 0 0 12px 12px; }
+.sequencer-page .anatomy-map svg { display: block; width: 100%; height: 100%; }
+.anatomy-torso { fill: #fafdff; stroke: #9eafc4; stroke-width: 2; }
+.anatomy-brace { fill: none; stroke: #9eafc4; stroke-width: 4; stroke-linecap: round; }
+.anatomy-heartbeat { fill: none; stroke: #71859c; stroke-width: 1.5; }
+.anatomy-limb { fill: none; stroke: #087d91; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.anatomy-foot { fill: #c6e4ec; stroke: #087d91; stroke-width: 2; stroke-linejoin: round; }
+.anatomy-head > rect { fill: #d8f3fc; stroke: #069fba; stroke-width: 2; }
+.anatomy-head ellipse { fill: #087d91; }
+.anatomy-dimensions { fill: #647a94; font-size: 9px; }
+.anatomy-dimensions path { fill: none; stroke: #a8b9cd; stroke-width: 1; }
+.anatomy-joint { cursor: pointer; outline: none; }
+.anatomy-hit-area { fill: transparent; }
+.anatomy-joint-ring { fill: #087d91; stroke: white; stroke-width: 1.5; }
+.anatomy-joint.is-pwm .anatomy-joint-ring { fill: #5d46c7; }
+.anatomy-joint.is-selected .anatomy-joint-ring { fill: #c9630a; stroke: #ffbd66; stroke-width: 2; }
+.anatomy-joint:focus-visible .anatomy-joint-ring { stroke: #ff7900; stroke-width: 3; }
+.anatomy-joint text { fill: white; font-size: 8px; font-weight: 700; pointer-events: none; }
+.anatomy-angle-indicator { pointer-events: none; stroke: #c9630a; stroke-width: 2; }
+.anatomy-cog { fill: none; stroke: #e26960; stroke-width: 1; pointer-events: none; }
+.anatomy-caption { display: grid; gap: 5px; padding-top: 10px; color: #566780; font-size: 10px; line-height: 1.5; }
+.anatomy-caption a { color: #087b93; }
+.sequencer-page .fine-panel { align-self: start; }
+.motion-joint-groups { max-height: 590px; overflow-y: auto; }
+.motion-joint-group { border: 0; border-bottom: 1px solid #e4ebfa; margin: 0 0 8px; padding: 0 0 8px; }
+.motion-joint-group legend { color: #667b94; font-size: 10px; padding-top: 8px; }
+.fine-panel .motion-joint-groups, .fine-panel .coupled-knees { grid-column: 1 / -1; }
+.coupled-knees { width: 100%; margin-top: 6px; padding: 9px; border: 1px solid #d9e2ff; border-radius: 8px; background: #f0f5ff; color: #435b7e; font-size: 11px; }
